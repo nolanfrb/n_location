@@ -1,0 +1,30 @@
+name: Coding Style Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  linter:
+    runs-on: ubunu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Lint
+      uses: iLLeniumStudios/fivem-lua-lint-action@v2
+      with:
+        capture: "junit.xml"
+        args: "-t --formatter JUnit"
+        extra_libs: mysql
+
+    - name: Create Coding Style Report
+      if: always()
+      uses: mikepenz/action-junit-report@v3
+      with:
+        report_paths: "**/junit.xml"
+        check_name: Linting Report
+        fail_on_failure: false
